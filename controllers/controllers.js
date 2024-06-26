@@ -9,6 +9,8 @@ export const use_basic_printer = (req, res) => {
   try {
     device.open(() => {
       // Configuración inicial común
+      printer.encode("UTF-8");
+
       printer.font("a").align("ct").style("normal");
 
       // Imprimir título y fecha con tamaño de letra reducido y fino
@@ -54,29 +56,26 @@ export const use_comanda_printer = (req, res) => {
 
   try {
     device.open(() => {
+      printer.encode("UTF-8");
       // Configuración inicial común
       printer.font("a").align("ct").style("normal");
 
       printer
         .size(0.05, 0.05)
         .text(header.table)
-        .text("________________________");
+        .text("________________________\n");
 
       items.forEach((item) => {
         printer
           .align("lt")
           .size(0.05, 0.05)
-          .text(`x${item.quantity} ${item.name} \n`)
-          .text(`Detalles: $${item.details} \n`)
-          .text(`Mozo: $${item.mozo} \n`)
-          .text(`Hora: $${item.time} \n`)
-          .text('_____________ \n \n')
+          .text(`x${item.quantity} ${item.name}`)
+          .text(`Detalles: ${item.details}`)
+          .text(`Mozo: ${item.mozo} - Hora: ${item.time}`)
+          .text("__________________________ \n");
       });
 
-      printer
-        .text('\n')
-        .cut()
-        .close();
+      printer.text("\n").cut().close();
 
       res.json({ status: true });
     });
@@ -94,6 +93,7 @@ export const use_check_printer = (req, res) => {
 
   try {
     device.open(() => {
+      printer.encode("UTF-8");
       // Configuración inicial común
       printer.font("a").align("ct").style("normal");
 
@@ -111,28 +111,19 @@ export const use_check_printer = (req, res) => {
         printer
           .align("lt")
           .size(0.05, 0.05) // Tamaño más pequeño y fino
-          .text(`${item.name} \n`)
+          .text(`${item.name}`)
           .align("rt")
-          .text(`x${item.quantity} $${item.subtotal} _ $${item.total} \n`)
-          .text("_____________");
+          .text(`x${item.quantity} $${item.subtotal} _ $${item.total}`);
       });
 
       // Imprimir total y mensaje de agradecimiento con tamaño de letra reducido y fino
-      printer
-        .text("________________________ \n \n")
-        .align("rt")
-        .size(0.05, 0.05);
+      printer.text("________________________ \n").align("rt").size(0.05, 0.05);
 
       footer.forEach((item) => {
-        printer
-          .text(item);
+        printer.text(item);
       });
-  
-      printer
-        .align("ct")
-        .text(`¡Gracias por su visita! \n \n`)
-        .cut()
-        .close();
+
+      printer.align("ct").text(`\n¡Gracias por su visita!`).cut().close();
 
       res.json({ status: true });
     });
@@ -150,6 +141,7 @@ export const use_facture_printer = (req, res) => {
 
   try {
     device.open(() => {
+      printer.encode("UTF-8");
       // Configuración inicial común
       printer.font("a").align("ct").style("normal");
 
@@ -159,21 +151,21 @@ export const use_facture_printer = (req, res) => {
         .align("lt")
         .text(header.facture)
         .text(header.code)
-        .text('_________________________')
+        .text("_________________________")
         .text(header.people)
         .text(header.cuit)
         .text(header.address)
         .text(header.localidad)
-        .text("_________________________ \n \n")
+        .text("_________________________ \n")
         .text(client)
-        .text(' \n')
+        .text(" \n")
         .text(`Total: $${monto}`)
-        .text("_________________________ \n \n")
+        .text("_________________________ \n")
         .text(`Fecha: ${footer.date}`)
         .text(`Nro.: ${footer.nro}`)
         .text(`CAE: ${footer.cae}`)
         .text(`Vto. CAE: ${footer.vto}`)
-        .text("_________________________ \n \n")
+        .text("_________________________ \n")
         .cut()
         .close();
 
